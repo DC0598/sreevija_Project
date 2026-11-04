@@ -1,4 +1,4 @@
-"""Sreevija Vastara – Flask + SQLite backend (also serves the storefront)."""
+"""Sreevija Vastara – Flask backend (also serves the storefront)."""
 import json
 import os
 import re
@@ -9,17 +9,29 @@ import uuid
 from functools import wraps
 from pathlib import Path
 
-from flask import Flask, g, jsonify, request, send_from_directory
+from flask import Flask, Response, g, jsonify, request, send_from_directory
 from werkzeug.security import check_password_hash, generate_password_hash
 
 BASE = Path(__file__).parent
+DATABASE_URL = os.environ.get("DATABASE_URL")
 DB_PATH = os.environ.get("DB_PATH", str(BASE / "shop.db"))
-UPLOADS = BASE / "uploads"
-UPLOADS.mkdir(exist_ok=True)
 FREE_SHIP, SHIP_FEE = 1999, 99
 SESSION_TTL = 60 * 60 * 24 * 14
 ORDER_STATUSES = ["Placed", "Confirmed", "Shipped", "Delivered", "Cancelled"]
 PAY_METHODS = ["UPI", "Credit / Debit Card", "Net Banking", "Cash on Delivery"]
+
+if os.environ.get("VERCEL") and not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL must be configured for Vercel deployments")
+if os.environ.get("VERCEL") and not os.environ.get("ADMIN_PASSWORD"):
+    raise RuntimeError("ADMIN_PASSWORD must be configured for Vercel deployments")
+
+if DATABASE_URL:
+    import psycopg
+    from psycopg.rows import dict_row
+
+    INTEGRITY_ERROR = psycopg.IntegrityError
+else:
+    INTEGRITY_ERROR = sqlite3.IntegrityError
 
 app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
@@ -48,7 +60,13 @@ CREATE TABLE IF NOT EXISTS orders(
 CREATE TABLE IF NOT EXISTS order_items(
   id INTEGER PRIMARY KEY, order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
   product_id INTEGER NOT NULL, name TEXT NOT NULL, price INTEGER NOT NULL, qty INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS media(
+  name TEXT PRIMARY KEY, content_type TEXT NOT NULL, data BLOB NOT NULL);
 """
+
+POSTGRES_SCHEMA = SCHEMA.replace("id INTEGER PRIMARY KEY", "id SERIAL PRIMARY KEY").replace(
+    "data BLOB NOT NULL", "data BYTEA NOT NULL"
+)
 
 SEED = [
     ("Royal Kanjivaram Silk", "Kanjivaram", "Pure Silk", "Rose", "Wedding", 12999, 15999, 4.8, 5, ["#e8a0b4", "#f3d9a4"], "Handwoven pure zari Kanjivaram with temple border and rich pallu."),
@@ -68,42 +86,89 @@ SEED = [
 
 
 # ---------- db ----------
+class DatabaseConnection:
+    def __init__(self, connection, postgres=False):
+        self.connection = connection
+        self.postgres = postgres
+
+    def execute(self, query, params=()):
+        if self.postgres:
+            query = query.replace("?", "%s").replace("BEGIN IMMEDIATE", "BEGIN")
+        return self.connection.execute(query, params)
+
+    def executemany(self, query, params):
+        if self.postgres:
+            query = query.replace("?", "%s")
+        return self.connection.executemany(query, params)
+
+    def close(self):
+        self.connection.close()
+
+
+def connect_db():
+    if DATABASE_URL:
+        return DatabaseConnection(
+            psycopg.connect(DATABASE_URL, row_factory=dict_row, autocommit=True),
+            postgres=True,
+        )
+    conn = sqlite3.connect(DB_PATH, isolation_level=None)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys=ON")
+    return DatabaseConnection(conn)
+
+
 def db():
     if "db" not in g:
-        g.db = sqlite3.connect(DB_PATH, isolation_level=None)
-        g.db.row_factory = sqlite3.Row
-        g.db.execute("PRAGMA foreign_keys=ON")
+        g.db = connect_db()
     return g.db
 
 
 @app.teardown_appcontext
-def close_db(_):
+def close_db(_error):
     conn = g.pop("db", None)
     if conn:
         conn.close()
 
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.executescript(SCHEMA)
-    if not conn.execute("SELECT 1 FROM products LIMIT 1").fetchone():
-        now = time.time()
-        for i, s in enumerate(SEED):
+    conn = connect_db()
+    try:
+        if DATABASE_URL:
+            conn.execute("BEGIN")
+            conn.execute("SELECT pg_advisory_xact_lock(749231045)")
+            for statement in POSTGRES_SCHEMA.split(";"):
+                if statement.strip():
+                    conn.execute(statement)
+        else:
+            conn.connection.executescript(SCHEMA)
+
+        if not conn.execute("SELECT 1 FROM products LIMIT 1").fetchone():
+            now = time.time()
+            for i, s in enumerate(SEED):
+                conn.execute(
+                    "INSERT INTO products(name,category,fabric,color,occasion,price,mrp,rating,stock,colors,description,created_at)"
+                    " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (*s[:9], json.dumps(s[9]), s[10], now + i),
+                )
+        if not conn.execute("SELECT 1 FROM users WHERE is_admin=1").fetchone():
+            email = os.environ.get("ADMIN_EMAIL", "admin@sreevijavastara.com")
+            pw = os.environ.get("ADMIN_PASSWORD") or secrets.token_urlsafe(9)
             conn.execute(
-                "INSERT INTO products(name,category,fabric,color,occasion,price,mrp,rating,stock,colors,description,created_at)"
-                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-                (*s[:9], json.dumps(s[9]), s[10], now + i),
+                "INSERT INTO users(name,email,password_hash,is_admin,created_at) VALUES(?,?,?,1,?)",
+                ("Admin", email, generate_password_hash(pw), time.time()),
             )
-    if not conn.execute("SELECT 1 FROM users WHERE is_admin=1").fetchone():
-        email = os.environ.get("ADMIN_EMAIL", "admin@sreevijavastara.com")
-        pw = os.environ.get("ADMIN_PASSWORD") or secrets.token_urlsafe(9)
-        conn.execute(
-            "INSERT INTO users(name,email,password_hash,is_admin,created_at) VALUES(?,?,?,1,?)",
-            ("Admin", email, generate_password_hash(pw), time.time()),
-        )
-        print(f"\n*** Admin account created: {email} / {pw}  (shown once, store it) ***\n", flush=True)
-    conn.commit()
-    conn.close()
+            if not os.environ.get("VERCEL"):
+                print(f"\n*** Admin account created: {email} / {pw}  (shown once, store it) ***\n", flush=True)
+        if DATABASE_URL:
+            conn.execute("COMMIT")
+        else:
+            conn.connection.commit()
+    except Exception:
+        if DATABASE_URL:
+            conn.execute("ROLLBACK")
+        raise
+    finally:
+        conn.close()
 
 
 # ---------- helpers ----------
@@ -212,12 +277,12 @@ def register():
         return err("Password must be at least 8 characters")
     try:
         cur = db().execute(
-            "INSERT INTO users(name,email,password_hash,created_at) VALUES(?,?,?,?)",
+            "INSERT INTO users(name,email,password_hash,created_at) VALUES(?,?,?,?) RETURNING id",
             (name, email, generate_password_hash(pw), time.time()),
         )
-    except sqlite3.IntegrityError:
+    except INTEGRITY_ERROR:
         return err("Email already registered", 409)
-    u = db().execute("SELECT * FROM users WHERE id=?", (cur.lastrowid,)).fetchone()
+    u = db().execute("SELECT * FROM users WHERE id=?", (cur.fetchone()["id"],)).fetchone()
     return jsonify(token=new_session(u["id"]), user=user_json(u)), 201
 
 
@@ -269,7 +334,7 @@ def pincode(pin):
 @login_required()
 def get_wishlist():
     rows = db().execute("SELECT product_id FROM wishlist WHERE user_id=?", (g.user["id"],)).fetchall()
-    return jsonify([r[0] for r in rows])
+    return jsonify([r["product_id"] for r in rows])
 
 
 @app.put("/api/wishlist/<int:pid>")
@@ -277,7 +342,7 @@ def get_wishlist():
 def add_wishlist(pid):
     if not db().execute("SELECT 1 FROM products WHERE id=? AND active=1", (pid,)).fetchone():
         return err("Not found", 404)
-    db().execute("INSERT OR IGNORE INTO wishlist VALUES(?,?)", (g.user["id"], pid))
+    db().execute("INSERT INTO wishlist VALUES(?,?) ON CONFLICT DO NOTHING", (g.user["id"], pid))
     return jsonify(ok=True)
 
 
@@ -371,10 +436,10 @@ def my_orders():
 def stats():
     c = db()
     return jsonify(
-        orders=c.execute("SELECT COUNT(*) FROM orders").fetchone()[0],
-        revenue=c.execute("SELECT COALESCE(SUM(total),0) FROM orders WHERE status!='Cancelled'").fetchone()[0],
-        products=c.execute("SELECT COUNT(*) FROM products WHERE active=1").fetchone()[0],
-        lowStock=c.execute("SELECT COUNT(*) FROM products WHERE active=1 AND stock<=3").fetchone()[0],
+        orders=c.execute("SELECT COUNT(*) AS count FROM orders").fetchone()["count"],
+        revenue=c.execute("SELECT COALESCE(SUM(total),0) AS revenue FROM orders WHERE status!='Cancelled'").fetchone()["revenue"],
+        products=c.execute("SELECT COUNT(*) AS count FROM products WHERE active=1").fetchone()["count"],
+        lowStock=c.execute("SELECT COUNT(*) AS count FROM products WHERE active=1 AND stock<=3").fetchone()["count"],
     )
 
 
@@ -393,8 +458,11 @@ def admin_create_product():
     data.setdefault("colors", '["#f4c2d0","#f3d9a4"]')
     data["created_at"] = time.time()
     cols = ",".join(data)
-    cur = db().execute(f"INSERT INTO products({cols}) VALUES({','.join('?' * len(data))})", list(data.values()))
-    r = db().execute("SELECT * FROM products WHERE id=?", (cur.lastrowid,)).fetchone()
+    cur = db().execute(
+        f"INSERT INTO products({cols}) VALUES({','.join('?' * len(data))}) RETURNING id",
+        list(data.values()),
+    )
+    r = db().execute("SELECT * FROM products WHERE id=?", (cur.fetchone()["id"],)).fetchone()
     return jsonify(product_json(r)), 201
 
 
@@ -437,7 +505,11 @@ def upload():
     else:
         return err("Only JPG, PNG or WEBP images are allowed")
     name = f"{uuid.uuid4().hex}.{ext}"
-    f.save(UPLOADS / name)
+    content_type = {"jpg": "image/jpeg", "png": "image/png", "webp": "image/webp"}[ext]
+    db().execute(
+        "INSERT INTO media(name,content_type,data) VALUES(?,?,?)",
+        (name, content_type, f.read()),
+    )
     return jsonify(url=f"/uploads/{name}"), 201
 
 
@@ -479,7 +551,12 @@ def admin_order_status(oid):
 # ---------- static ----------
 @app.get("/uploads/<path:name>")
 def serve_upload(name):
-    return send_from_directory(UPLOADS, name)
+    image = db().execute("SELECT content_type,data FROM media WHERE name=?", (name,)).fetchone()
+    if not image:
+        return err("Not found", 404)
+    response = Response(image["data"], mimetype=image["content_type"])
+    response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
 
 
 @app.get("/")
