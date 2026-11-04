@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sreevija Vastara – Sarees, Silks &amp; Handlooms</title>
+  <meta name="description" content="Discover timeless sarees, silks and handlooms at Sreevija Vastara.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <a href="#/" class="logo" aria-label="Sreevija Vastara home">
+      <svg class="logo-mark" viewBox="0 0 48 52" aria-hidden="true">
+        <path d="M24 45C13 39 8 30 12 20c4-9 12-14 12-14s8 5 12 14c4 10-1 19-12 25Z" />
+        <path d="M24 44c-1-12-1-22 0-34M15 22c4 2 7 6 9 11m9-11c-4 2-7 6-9 11M11 42c8-2 17-2 26 0" />
+        <path d="M20 46h8M17 49h14" />
+      </svg>
+      <span class="logo-copy"><span class="logo-name">SREEVIJA <b>VASTARA</b></span><small>SAREES · SILKS · HANDLOOMS</small></span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#/" class="nav-home">Home</a>
+      <details class="nav-dropdown">
+        <summary>Sarees <span aria-hidden="true">⌄</span></summary>
+        <div class="dropdown-menu">
+          <a href="#/shop">All Sarees</a>
+          <a href="#/shop?category=Kanjivaram">Kanjivaram</a>
+          <a href="#/shop?category=Bridal">Bridal</a>
+          <a href="#/shop?category=Dharmavaram">Dharmavaram</a>
+        </div>
+      </details>
+      <a href="#/shop?category=Silk">Silks</a>
+      <a href="#/shop?category=Dharmavaram">Handlooms</a>
+      <a href="#/story">Our Story</a>
+      <a href="#/contact">Contact</a>
+    </nav>
+    <form class="search" id="searchForm"><input id="searchInput" type="search" placeholder="Search sarees, silks…" aria-label="Search"></form>
+    <span id="authLinks" class="auth-links"></span>
+    <a href="#/cart" class="cart-link" aria-label="Shopping bag">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+      <span id="cartCount">0</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="footer" id="contact">
+    <div class="footer-brand">
+      <a href="#/" class="logo" aria-label="Sreevija Vastara home">
+        <svg class="logo-mark" viewBox="0 0 48 52" aria-hidden="true">
+          <path d="M24 45C13 39 8 30 12 20c4-9 12-14 12-14s8 5 12 14c4 10-1 19-12 25Z" />
+          <path d="M24 44c-1-12-1-22 0-34M15 22c4 2 7 6 9 11m9-11c-4 2-7 6-9 11M11 42c8-2 17-2 26 0" />
+          <path d="M20 46h8M17 49h14" />
+        </svg>
+        <span class="logo-copy"><span class="logo-name">SREEVIJA <b>VASTARA</b></span><small>SAREES · SILKS · HANDLOOMS</small></span>
+      </a>
+      <p>Timeless weaves, thoughtfully crafted and made to be cherished.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="#/">Home</a><a href="#/shop">Sarees</a><a href="#/shop?category=Silk">Silks</a><a href="#/shop?category=Dharmavaram">Handlooms</a>
+    </div>
+    <div class="footer-links">
+      <h4>About Us</h4>
+      <a href="#/story">Our Story</a><a href="#/story">Craftsmanship</a><a href="#/story">Care Guide</a><a href="#/contact">Contact</a>
+    </div>
+    <div class="footer-newsletter">
+      <h4>Stay Connected</h4>
+      <p>Subscribe for new collections, festive offers and exclusive updates.</p>
+      <form id="newsletter"><input type="email" placeholder="Enter your email address" aria-label="Email address" required><button class="btn">Subscribe</button></form>
+    </div>
+  </footer>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
