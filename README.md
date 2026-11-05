@@ -38,6 +38,11 @@ templates. The dashboard is at `/manage/`.
    database; change `regions` in `vercel.json` if the database is moved.
    If you use a custom domain, also add it to the `ALLOWED_HOSTS` environment
    variable (comma-separated).
+4. To provision a second admin, add `ADDITIONAL_ADMIN_USERNAME` and
+   `ADDITIONAL_ADMIN_PASSWORD` as Vercel environment variables and redeploy.
+   Use a unique password of at least 12 characters. The account is created
+   once; subsequent builds leave its password unchanged. Login accepts either
+   an email address or username.
 
 Uploaded JPG, PNG, and WEBP images are stored in the `shop_productimage` table
 and served from `/uploads/<filename>`, so uploads persist between serverless

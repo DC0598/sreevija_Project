@@ -1,8 +1,10 @@
 import json
 import time
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection
 from django.test import TestCase
@@ -18,6 +20,38 @@ from .models import (
 )
 
 User = get_user_model()
+
+
+class AdditionalAdminCommandTests(TestCase):
+    def test_creates_admin_once_without_resetting_existing_password(self):
+        variables = {
+            "ADDITIONAL_ADMIN_USERNAME": "admin",
+            "ADDITIONAL_ADMIN_PASSWORD": "HighEntropy!Passphrase742",
+        }
+        with patch.dict("os.environ", variables):
+            call_command("create_additional_admin")
+        admin = User.objects.get(username="admin")
+        self.assertTrue(admin.is_superuser)
+        self.assertTrue(admin.is_staff)
+        self.assertTrue(admin.check_password(variables["ADDITIONAL_ADMIN_PASSWORD"]))
+
+        variables["ADDITIONAL_ADMIN_PASSWORD"] = "Changed!Passphrase9876"
+        with patch.dict("os.environ", variables):
+            call_command("create_additional_admin")
+        admin.refresh_from_db()
+        self.assertTrue(admin.check_password("HighEntropy!Passphrase742"))
+
+    def test_rejects_short_additional_admin_password(self):
+        with patch.dict(
+            "os.environ",
+            {
+                "ADDITIONAL_ADMIN_USERNAME": "admin",
+                "ADDITIONAL_ADMIN_PASSWORD": "short",
+            },
+        ):
+            with self.assertRaises(CommandError):
+                call_command("create_additional_admin")
+        self.assertFalse(User.objects.filter(username="admin").exists())
 
 
 class StorefrontTests(TestCase):
@@ -59,9 +93,22 @@ class StorefrontTests(TestCase):
         self.client.post(reverse("logout"))
         login = self.client.post(
             reverse("login"),
-            {"email": "buyer@example.com", "password": "Long!Passphrase742"},
+            {"identifier": "buyer@example.com", "password": "Long!Passphrase742"},
         )
         self.assertRedirects(login, reverse("home"))
+
+    def test_staff_can_log_in_with_username(self):
+        User.objects.create_superuser(
+            username="admin",
+            email="",
+            password="Secure!AdminPassphrase742",
+        )
+        response = self.client.post(
+            reverse("login"),
+            {"identifier": "admin", "password": "Secure!AdminPassphrase742"},
+        )
+        self.assertRedirects(response, reverse("manage"))
+        self.assertTrue(self.client.session.get("_auth_user_id"))
 
     def test_checkout_uses_database_price_and_decrements_stock(self):
         self.client.post(reverse("cart_add", args=[self.product.pk]), {"qty": "2"})
@@ -191,9 +238,31 @@ class StorefrontTests(TestCase):
             password="Staff!Passphrase742",
         )
         self.client.force_login(staff)
+        order = Order.objects.create(
+            name="Guest Buyer",
+            phone="9876543210",
+            email="guest@example.com",
+            address="12 Test Street",
+            city="Chennai",
+            pincode="600001",
+            payment_method="Cash on Delivery",
+            subtotal=1800,
+            shipping=99,
+            total=1899,
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            name=self.product.name,
+            price=self.product.price,
+            qty=1,
+        )
         dashboard = self.client.get(reverse("manage"))
         self.assertContains(dashboard, "Admin Dashboard")
         self.assertContains(dashboard, self.product.name)
+        self.assertContains(dashboard, '<table class="admin-order-table">')
+        self.assertContains(dashboard, "guest@example.com")
+        self.assertContains(dashboard, order.pk)
         response = self.client.post(reverse("newsletter"), {"email": "reader@example.com"})
         self.assertRedirects(response, reverse("home"))
         self.assertTrue(NewsletterSubscriber.objects.filter(email="reader@example.com").exists())

@@ -370,10 +370,10 @@ def register(request):
 def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        email = form.cleaned_data["email"].strip().lower()
+        identifier = form.cleaned_data["identifier"].strip().lower()
         user = authenticate(
             request,
-            username=email,
+            username=identifier,
             password=form.cleaned_data["password"],
         )
         if user is None:

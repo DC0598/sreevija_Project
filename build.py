@@ -19,6 +19,7 @@ def main():
         call_command("import_legacy_products")
         call_command("seed_store")
         call_command("create_initial_admin")
+        call_command("create_additional_admin")
 
     if connection.vendor == "postgresql":
         with transaction.atomic():
