@@ -72,10 +72,27 @@ class StorefrontTests(TestCase):
         )
 
     def test_home_catalog_and_product_detail_render(self):
-        self.assertContains(self.client.get(reverse("home")), "Bestsellers")
+        home = self.client.get(reverse("home"))
+        self.assertContains(home, "Bestsellers")
+        self.assertNotContains(home, "5 in stock")
+        self.assertNotContains(home, "Only 5 left")
         listing = self.client.get(reverse("shop"), {"category": "Silk", "sort": "low"})
         self.assertContains(listing, self.product.name)
-        self.assertContains(self.client.get(reverse("product", args=[self.product.pk])), self.product.description)
+        detail = self.client.get(reverse("product", args=[self.product.pk]))
+        self.assertContains(detail, self.product.description)
+        self.assertNotContains(detail, "5 in stock")
+        self.assertNotContains(detail, "Only 5 left")
+
+    def test_inventory_quantity_is_labeled_for_admin_only(self):
+        staff = User.objects.create_superuser(
+            username="inventory-admin@example.com",
+            email="inventory-admin@example.com",
+            password="Secure!AdminPassphrase742",
+        )
+        self.client.force_login(staff)
+        response = self.client.get(reverse("manage_product_add"))
+        self.assertContains(response, "Quantity in stock")
+        self.assertContains(response, "Customers will not see this number.")
 
     def test_registration_login_wishlist_and_logout(self):
         response = self.client.post(

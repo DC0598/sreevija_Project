@@ -69,6 +69,10 @@ class ProductForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"rows": 2}),
             "rating": forms.NumberInput(attrs={"min": 0, "max": 5, "step": "0.1"}),
         }
+        labels = {"stock": "Quantity in stock"}
+        help_texts = {
+            "stock": "Internal inventory count for order tracking. Customers will not see this number."
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

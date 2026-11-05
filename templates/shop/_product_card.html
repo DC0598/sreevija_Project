@@ -17,11 +17,7 @@
     <span class="muted">{{ product.fabric }} · ★ {{ product.rating }}</span>
     <span class="price">{{ product.price|currency }} <s>{{ product.mrp|currency }}</s></span>
     <div class="card-actions">
-      <span class="muted">
-        {% if product.stock <= 0 %}<b class="low">Out of stock</b>
-        {% elif product.stock <= 5 %}<b class="low">Only {{ product.stock }} left</b>
-        {% else %}<span class="ok">{{ product.stock }} in stock</span>{% endif %}
-      </span>
+      {% if product.stock <= 0 %}<span class="muted"><b class="low">Out of stock</b></span>{% endif %}
       <form method="post" action="{% url 'cart_add' product.id %}">
         {% csrf_token %}
         <input type="hidden" name="return_to" value="{{ request.get_full_path }}">

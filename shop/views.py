@@ -201,7 +201,7 @@ def cart_add(request, pk):
     cart = request.session.get("cart", {})
     current = int(cart.get(str(pk), 0))
     if current + quantity > product.stock:
-        messages.error(request, f"Only {product.stock} left in stock.")
+        messages.error(request, "The selected quantity is not currently available.")
         return redirect("product", pk=pk)
     cart[str(pk)] = current + quantity
     request.session["cart"] = cart
@@ -228,7 +228,7 @@ def cart_update(request, pk):
         if quantity <= 0:
             cart.pop(str(pk), None)
         elif quantity > 20 or quantity > product.stock:
-            messages.error(request, f"Only {product.stock} left in stock.")
+            messages.error(request, "The selected quantity is not currently available.")
         else:
             cart[str(pk)] = quantity
     request.session["cart"] = cart
@@ -295,7 +295,7 @@ def checkout(request):
                         raise ValueError("Your cart has changed. Please review it and try again.")
                     if line["product"].stock < quantity:
                         raise ValueError(
-                            f"Only {line['product'].stock} left of {line['product'].name}."
+                            f"The requested quantity of {line['product'].name} is not currently available."
                         )
                     line["qty"] = quantity
                     subtotal += line["product"].price * quantity

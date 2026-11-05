@@ -13,7 +13,7 @@
         <div><a href="{% url 'product' line.product.id %}"><b>{{ line.product.name }}</b></a><br><span class="muted">{{ line.product.fabric }}</span></div>
         <form class="qty" method="post" action="{% url 'cart_update' line.product.id %}">
           {% csrf_token %}
-          <input type="number" name="qty" min="0" max="{{ line.product.stock }}" value="{{ line.qty }}" aria-label="Quantity" style="width:54px;padding:7px;border:0;text-align:center">
+          <input type="number" name="qty" min="0" max="20" value="{{ line.qty }}" aria-label="Quantity" style="width:54px;padding:7px;border:0;text-align:center">
           <button type="submit">Update</button>
         </form>
         <div><b>{{ line.product.price|multiply:line.qty|currency }}</b><br>

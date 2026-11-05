@@ -8,6 +8,7 @@
     {% for field in form %}
       <label for="{{ field.id_for_label }}">{{ field.label }}</label>
       {{ field }}
+      {% if field.help_text %}<span class="muted">{{ field.help_text }}</span>{% endif %}
       {% if field.errors %}<div class="form-errors">{{ field.errors }}</div>{% endif %}
     {% endfor %}
     {% if product and product.image_name %}<p class="muted">Current image: {{ product.image_name }}</p>{% endif %}
