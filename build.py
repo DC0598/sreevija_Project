@@ -15,6 +15,7 @@ def main():
     from django.db import connection, transaction
 
     def initialize_store():
+        call_command("collectstatic", interactive=False, clear=True)
         call_command("migrate", interactive=False)
         call_command("import_legacy_products")
         call_command("seed_store")

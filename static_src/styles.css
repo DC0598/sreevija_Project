@@ -326,8 +326,10 @@ main { min-height: 65vh; }
 .message.error { color: #8d1c2a; background: #f8dddd; }
 .form-errors { color: #a43838; font-size: 13px; }
 .link-button { padding: 0; background: none; border: 0; cursor: pointer; text-decoration: underline; }
-.card .info form { margin-top: auto; }
-.card .info form .btn { width: 100%; }
+.card-actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; }
+.card-actions .muted { font-size: 11px; }
+.card-actions form { flex: 0 0 auto; }
+.card-actions .btn { padding: 8px 10px; font-size: 11px; }
 .toolbar h3 { margin: 0; color: var(--wine); }
 .admin-inline-form { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 8px; }
 .admin-inline-form select { max-width: 180px; padding: 7px; background: #fffdf8; border: 1px solid #dbcdb8; border-radius: 4px; }
