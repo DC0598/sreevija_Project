@@ -286,6 +286,14 @@ main { min-height: 65vh; }
 .checkout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
 .form { display: grid; gap: 12px; padding: 20px; }
 .form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.password-field { position: relative; display: block; }
+.password-field input { width: 100%; padding-right: 46px; }
+.password-toggle { position: absolute; top: 50%; right: 8px; display: grid; width: 32px; height: 32px; place-items: center; padding: 5px; color: var(--muted); background: transparent; border: 0; border-radius: 50%; cursor: pointer; transform: translateY(-50%); }
+.password-toggle:hover { color: var(--wine); background: #f2e7d6; }
+.password-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.password-eye-off { display: none; }
+.password-toggle[aria-pressed="true"] .password-eye { display: none; }
+.password-toggle[aria-pressed="true"] .password-eye-off { display: block; }
 .empty { padding: 60px 0; color: var(--muted); text-align: center; }
 .perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; text-align: center; }
 .perks > div { padding: 20px; }

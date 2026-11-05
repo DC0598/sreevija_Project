@@ -110,6 +110,13 @@ class StorefrontTests(TestCase):
         self.assertRedirects(response, reverse("manage"))
         self.assertTrue(self.client.session.get("_auth_user_id"))
 
+    def test_password_visibility_toggle_renders_on_login_and_registration(self):
+        for path in (reverse("login"), reverse("register")):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertContains(response, 'class="password-toggle"')
+                self.assertContains(response, 'aria-label="Show password"')
+
     def test_checkout_uses_database_price_and_decrements_stock(self):
         self.client.post(reverse("cart_add", args=[self.product.pk]), {"qty": "2"})
         response = self.client.post(
