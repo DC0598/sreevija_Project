@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="192" viewBox="0 0 512 192">
+  <defs>
+    <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff0b0"/>
+      <stop offset=".48" stop-color="#e4b84f"/>
+      <stop offset="1" stop-color="#9c671e"/>
+    </linearGradient>
+    <filter id="glow" x="-.1" y="-.1" width="1.2" height="1.2">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="blur"/>
+      <feFlood flood-color="#f8d77f" flood-opacity=".45"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g fill="url(#gold)" filter="url(#glow)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+    <text x="256" y="96" font-size="94" letter-spacing="1">SREEVIJA</text>
+    <text x="256" y="164" font-size="57" letter-spacing="17">VASTRA</text>
+  </g>
+</svg>

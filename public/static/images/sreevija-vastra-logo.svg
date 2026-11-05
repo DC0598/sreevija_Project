@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="background" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#350611"/>
+      <stop offset=".55" stop-color="#52091b"/>
+      <stop offset="1" stop-color="#350611"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff0b0"/>
+      <stop offset=".48" stop-color="#e4b84f"/>
+      <stop offset="1" stop-color="#9c671e"/>
+    </linearGradient>
+    <filter id="glow" x="-.1" y="-.1" width="1.2" height="1.2">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
+      <feFlood flood-color="#f8d77f" flood-opacity=".4"/>
+      <feComposite in2="blur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="34" fill="url(#background)"/>
+  <image href="sreevija-vastra-emblem.png" x="171" y="22" width="170" height="170"/>
+  <g fill="url(#gold)" filter="url(#glow)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+    <text x="256" y="284" font-size="75" letter-spacing="1">SREEVIJA</text>
+    <text x="256" y="341" font-size="43" letter-spacing="15">VASTRA</text>
+  </g>
+  <path d="M92 375h129m70 0h129" stroke="#d7ad52" stroke-width="2"/>
+  <image href="sreevija-vastra-flower.png" x="231" y="359" width="50" height="34"/>
+  <text x="256" y="427" fill="#f0d58f" font-family="Arial, sans-serif" font-size="19" letter-spacing="5" text-anchor="middle">SAREES · SILKS · HANDLOOMS</text>
+</svg>
