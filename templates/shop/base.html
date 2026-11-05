@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Sreevija Vastara – Sarees, Silks &amp; Handlooms{% endblock %}</title>
+  <meta name="description" content="Discover timeless sarees, silks and handlooms at Sreevija Vastara.">
+  <link rel="icon" type="image/png" href="{% static 'images/sreevija-vastara-logo.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <header class="header">
+    <a href="{% url 'home' %}" class="logo" aria-label="Sreevija Vastara home">
+      <span class="logo-copy">
+        <span class="brand-name-lockup">
+          <img class="brand-emblem" src="{% static 'images/sreevija-vastara-emblem.png' %}" alt="">
+          <img class="brand-wordmark" src="{% static 'images/sreevija-vastara-wordmark.png' %}" alt="Sreevija Vastara">
+        </span>
+        <span class="brand-flourish" aria-hidden="true"><img src="{% static 'images/sreevija-vastara-flower.png' %}" alt=""></span>
+        <small>SAREES · SILKS · HANDLOOMS</small>
+      </span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="{% url 'home' %}">Home</a>
+      <details class="nav-dropdown">
+        <summary>Sarees <span aria-hidden="true">⌄</span></summary>
+        <div class="dropdown-menu">
+          <a href="{% url 'shop' %}">All Sarees</a>
+          <a href="{% url 'shop' %}?category=Kanjivaram">Kanjivaram</a>
+          <a href="{% url 'shop' %}?category=Bridal">Bridal</a>
+          <a href="{% url 'shop' %}?category=Dharmavaram">Dharmavaram</a>
+        </div>
+      </details>
+      <a href="{% url 'shop' %}?category=Silk">Silks</a>
+      <a href="{% url 'shop' %}?category=Dharmavaram">Handlooms</a>
+      <a href="{% url 'story' %}">Our Story</a>
+      <a href="#contact">Contact</a>
+      <div class="mobile-nav-account">
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}<a href="{% url 'manage' %}">Admin dashboard</a>{% endif %}
+          <a href="{% url 'wishlist' %}">My Wishlist</a>
+          <a href="{% url 'orders' %}">My Orders</a>
+          <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Logout</button></form>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'register' %}">Create account</a>
+        {% endif %}
+      </div>
+    </nav>
+    <form class="search" action="{% url 'shop' %}" method="get">
+      <input name="q" type="search" value="{{ request.GET.q }}" placeholder="Search sarees, silks…" aria-label="Search">
+    </form>
+    <span class="auth-links">
+      {% if user.is_authenticated %}
+        {% if user.is_staff %}<a href="{% url 'manage' %}">Admin</a>{% endif %}
+        <a href="{% url 'wishlist' %}">♥ Wishlist</a>
+        <a href="{% url 'orders' %}">My Orders</a>
+        <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="header-link" type="submit">Logout</button></form>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+      {% endif %}
+    </span>
+    <a href="{% url 'cart' %}" class="cart-link" aria-label="Shopping bag">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+      <span id="cartCount">{{ cart_count }}</span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+  </header>
+
+  {% if messages %}
+    <div class="messages" role="status">
+      {% for message in messages %}<p class="message {{ message.tags }}">{{ message }}</p>{% endfor %}
+    </div>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="footer-brand">
+      <a href="{% url 'home' %}" class="logo" aria-label="Sreevija Vastara home">
+        <span class="logo-copy">
+          <span class="brand-name-lockup">
+            <img class="brand-emblem" src="{% static 'images/sreevija-vastara-emblem.png' %}" alt="">
+            <img class="brand-wordmark" src="{% static 'images/sreevija-vastara-wordmark.png' %}" alt="Sreevija Vastara">
+          </span>
+          <span class="brand-flourish" aria-hidden="true"><img src="{% static 'images/sreevija-vastara-flower.png' %}" alt=""></span>
+          <small>SAREES · SILKS · HANDLOOMS</small>
+        </span>
+      </a>
+      <p>Timeless weaves, thoughtfully crafted and made to be cherished.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <a href="{% url 'home' %}">Home</a><a href="{% url 'shop' %}">Sarees</a>
+      <a href="{% url 'shop' %}?category=Silk">Silks</a>
+      <a href="{% url 'shop' %}?category=Dharmavaram">Handlooms</a>
+    </div>
+    <div class="footer-links">
+      <h4>About Us</h4>
+      <a href="{% url 'story' %}">Our Story</a><a href="{% url 'story' %}#craftsmanship">Craftsmanship</a>
+      <a href="{% url 'story' %}#care">Care Guide</a><a href="#contact">Contact</a>
+    </div>
+    <div class="footer-newsletter">
+      <h4>Stay Connected</h4>
+      <p>Subscribe for new collections, festive offers and exclusive updates.</p>
+      <form action="{% url 'newsletter' %}" method="post">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Enter your email address" aria-label="Email address" required>
+        <button class="btn">Subscribe</button>
+      </form>
+    </div>
+  </footer>
+  <script src="{% static 'site.js' %}" defer></script>
+</body>
+</html>

@@ -1,40 +1,48 @@
 # Sreevija Vastara
 
-Flask storefront and API. Local development uses SQLite; setting `DATABASE_URL`
-uses PostgreSQL (Neon is supported) and stores uploaded product images in the
-database, so they persist across Vercel serverless invocations.
+Django storefront with server-rendered templates, Django authentication, and a
+PostgreSQL database. Local development uses SQLite unless `DATABASE_URL` is set.
+Product images uploaded in the staff area are stored as bytes in the database.
 
-## Run
+## Run locally
+
+```sh
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+cp .env.example .env
+# Set SECRET_KEY, ADMIN_EMAIL and ADMIN_PASSWORD in .env.
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py seed_store
+.venv/bin/python manage.py create_initial_admin
+.venv/bin/python manage.py runserver
 ```
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='choose-a-password' .venv/bin/python server.py
-```
-Open http://127.0.0.1:5050. If `ADMIN_PASSWORD` is unset, a random admin password is printed once on first start.
-Env: `PORT`, `DB_PATH`.
+
+Open http://127.0.0.1:8000. Product browsing, search, filters, cart, checkout,
+customer accounts, wishlist, order history, and the staff dashboard are Django
+templates. The dashboard is at `/manage/`.
 
 ## Deploy to Vercel with Neon
 
-1. Create a Neon project and copy its PostgreSQL connection string. Use the
-   pooled connection string and ensure it includes `sslmode=require`.
-2. Import this GitHub repository as a Vercel project. Keep the project root at
-   the repository root. Vercel detects the Flask app in `server.py` and serves
-   the storefront assets in `public/`.
-3. Add these Vercel environment variables for the environments you will deploy:
-   - `DATABASE_URL`: the Neon connection string
-   - `ADMIN_EMAIL`: the initial administrator's email
-   - `ADMIN_PASSWORD`: a strong password for the initial administrator
-4. Deploy. The app creates its tables and starter products in Neon on startup.
-   The initial admin account is created only if Neon has no admin user.
+1. In the existing Vercel project, keep the root directory at the repository
+   root. Vercel detects Django from `manage.py`.
+2. Set `DATABASE_URL` to the Neon pooled PostgreSQL connection string,
+   `SECRET_KEY` to a new random secret, `ADMIN_EMAIL` to the admin email, and
+   `ADMIN_PASSWORD` to a strong admin password. Set them for each environment
+   that should have a deployment.
+3. Push the code and deploy. Vercel runs `build.py`, which applies Django
+   migrations, imports the previous app's product catalog and image bytes if
+   present, seeds products if the catalog is empty, and creates the initial
+   staff account if one does not already exist. Vercel collects and serves
+   Django static assets from its CDN.
+   If you use a custom domain, also add it to the `ALLOWED_HOSTS` environment
+   variable (comma-separated).
 
-Admin-uploaded JPG, PNG, and WEBP files are stored in the `media` table as
-PostgreSQL `BYTEA` data and served back from `/uploads/<filename>`. No local
-filesystem storage is used for uploads on Vercel. Existing data in a local
-`shop.db` is not copied to Neon automatically.
+Uploaded JPG, PNG, and WEBP images are stored in the `shop_productimage` table
+and served from `/uploads/<filename>`, so uploads persist between serverless
+calls. The existing Neon tables from the previous app are left untouched; the
+Django app uses its own tables. Legacy products and any referenced uploaded
+images are imported into the Django catalog on the first deploy. Existing
+customer accounts and orders are not imported.
 
-## API
-- Auth: `POST /api/auth/register|login|logout`, `GET /api/auth/me` (Bearer token)
-- Shop: `GET /api/products[/id]`, `GET /api/pincode/<pin>`, `POST /api/orders` (guest or logged in; prices/stock checked server-side), `GET /api/orders`
-- Admin: `GET /api/admin/stats|products|orders`, `POST|PUT|DELETE /api/admin/products[/id]`, `POST /api/admin/upload`, `PATCH /api/admin/orders/<id>`
-- Admin UI: `/#/admin`
-
-Online payment gateway (e.g. Razorpay) is not integrated; orders are stored with payment status `Pending` and the admin can mark them paid.
+Orders are recorded with payment status `Pending`. No online payment gateway is
+connected; staff can update order/payment status from `/manage/`.

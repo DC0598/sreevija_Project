@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+{% load shop_extras %}
+{% block title %}My Orders – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section">
+  <h2>My Orders</h2>
+  {% for order in orders %}
+    <div class="cart-item" style="grid-template-columns:1fr auto">
+      <div><b>{{ order.id }}</b> · {{ order.created_at|date:"j M Y" }}<br>
+        <span class="muted">{% for item in order.items.all %}{{ item.name }} × {{ item.qty }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>
+      </div>
+      <div style="text-align:right"><b>{{ order.total|currency }}</b><br><span class="muted">{{ order.status }} · {{ order.payment_method }}</span></div>
+    </div>
+  {% empty %}<div class="empty">No orders yet.</div>{% endfor %}
+</section>
+{% endblock %}

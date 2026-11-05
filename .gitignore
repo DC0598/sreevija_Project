@@ -4,3 +4,7 @@ __pycache__/
 *.py[cod]
 shop.db
 uploads/
+.env
+.env.*
+!.env.example
+staticfiles/

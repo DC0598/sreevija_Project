@@ -1,0 +1,20 @@
+{% extends "shop/base.html" %}
+{% block title %}{% if register %}Create account{% else %}Login{% endif %} – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section" style="max-width:480px;margin:auto">
+  <form class="form" method="post">
+    {% csrf_token %}
+    <h2>{% if register %}Create account{% else %}Login{% endif %}</h2>
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      <label for="{{ field.id_for_label }}">{% if field.name == "email" %}Email{% elif field.name == "name" %}Full name{% else %}Password{% if register %} (min 8 characters){% endif %}{% endif %}</label>
+      {{ field }}
+      {% if field.errors %}<div class="form-errors">{{ field.errors }}</div>{% endif %}
+    {% endfor %}
+    <button class="btn" type="submit">{% if register %}Register{% else %}Login{% endif %}</button>
+    {% if register %}<p class="muted">Have an account? <a href="{% url 'login' %}"><u>Login</u></a></p>
+    {% else %}<p class="muted">New here? <a href="{% url 'register' %}"><u>Create an account</u></a></p>{% endif %}
+  </form>
+</section>
+{% endblock %}

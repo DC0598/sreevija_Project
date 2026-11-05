@@ -1,0 +1,9 @@
+{% extends "shop/base.html" %}
+{% block title %}My Wishlist – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section">
+  <h2>My Wishlist</h2>
+  {% if products %}<div class="grid">{% for card in products %}{% include "shop/_product_card.html" with product=card.product image_url=card.image_url %}{% endfor %}</div>
+  {% else %}<div class="empty">Your wishlist is empty. <a href="{% url 'shop' %}"><u>Browse sarees</u></a></div>{% endif %}
+</section>
+{% endblock %}

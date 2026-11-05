@@ -1,0 +1,38 @@
+{% extends "shop/base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">Woven with devotion</span>
+    <h1>Weaving Tradition,<br>Celebrating Elegance</h1>
+    <div class="hero-flourish" aria-hidden="true"><span></span>✿<span></span></div>
+    <p>Discover sarees crafted for every story,<br>every celebration.</p>
+    <a class="btn alt" href="{% url 'shop' %}">Explore Collection <span aria-hidden="true">›</span></a>
+  </div>
+  <a class="hero-image-credit" href="{% url 'shop' %}" aria-label="Explore the saree collection"></a>
+  <div class="hero-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+</section>
+<section class="category-section" aria-label="Shop collections">
+  <div class="category-cards">
+    {% for category in categories %}
+      <a class="category-card" href="{% url 'shop' %}?category={{ category.category|urlencode }}" style="--category-image:url('{{ category.image }}')">
+        <span>{{ category.title }} <b aria-hidden="true">›</b></span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+<div class="heritage-line"><span aria-hidden="true">✿</span><p>Timeless Weaves <b>·</b> Thoughtful Craftsmanship <b>·</b> Made to Be Cherished</p><span aria-hidden="true">✿</span></div>
+<section class="section bestsellers" id="bestsellers">
+  <div class="section-title"><span></span><h2>Bestsellers</h2><span></span></div>
+  <div class="grid featured-grid">
+    {% for card in bestsellers %}{% include "shop/_product_card.html" with product=card.product image_url=card.image_url %}{% empty %}
+      <p class="empty">Our collection is being prepared. Please visit again soon.</p>
+    {% endfor %}
+  </div>
+</section>
+<section class="story-section" id="story">
+  <span class="eyebrow">A legacy in every thread</span>
+  <h2>Tradition, treasured for generations</h2>
+  <p>We bring together heirloom-worthy silks and handloom sarees, chosen for the artistry, care and stories woven into every drape.</p>
+  <a class="text-link" href="{% url 'story' %}">Discover our story <span aria-hidden="true">→</span></a>
+</section>
+{% endblock %}

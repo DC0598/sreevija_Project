@@ -1,0 +1,11 @@
+{% extends "shop/base.html" %}
+{% load shop_extras %}
+{% block title %}Order placed – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section empty">
+  <h1>Thank you!</h1>
+  <p>Your order <b>{{ order.id }}</b> has been placed. Total {{ order.total|currency }}.</p>
+  <p class="muted">Payment status: {{ order.payment_status }}</p>
+  <a class="btn" href="{% url 'home' %}">Back to home</a>
+</section>
+{% endblock %}

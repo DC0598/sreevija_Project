@@ -1,0 +1,9 @@
+{% extends "shop/base.html" %}
+{% block title %}Delivery availability – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section empty">
+  {% if error %}<p class="low">{{ error }}</p>
+  {% else %}<h2>Delivery available</h2><p>Delivery to {{ pin }} in {{ days }} days.</p>{% endif %}
+  <a class="btn" href="{% url 'shop' %}">Continue shopping</a>
+</section>
+{% endblock %}

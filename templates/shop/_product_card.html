@@ -1,0 +1,32 @@
+{% load shop_extras %}
+<article class="card">
+  <div class="swatch-wrap">
+    <a href="{% url 'product' product.id %}">
+      <div class="swatch" style="background: #eee url('{{ image_url }}') center/cover">
+        <span class="badge">{{ product.discount_percent }}% OFF</span>
+      </div>
+    </a>
+    <form method="post" action="{% url 'wishlist_toggle' product.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
+      <button class="heart{% if product.id in wishlist_ids %} on{% endif %}" aria-label="Toggle wishlist" type="submit">{% if product.id in wishlist_ids %}♥{% else %}♡{% endif %}</button>
+    </form>
+  </div>
+  <div class="info">
+    <a href="{% url 'product' product.id %}" class="name">{{ product.name }}</a>
+    <span class="muted">{{ product.fabric }} · ★ {{ product.rating }}</span>
+    <span class="price">{{ product.price|currency }} <s>{{ product.mrp|currency }}</s></span>
+    <span class="muted">
+      {% if product.stock <= 0 %}<b class="low">Out of stock</b>
+      {% elif product.stock <= 5 %}<b class="low">Only {{ product.stock }} left</b>
+      {% else %}<span class="ok">{{ product.stock }} in stock</span>{% endif %}
+    </span>
+    <form method="post" action="{% url 'cart_add' product.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
+      <button class="btn" type="submit" {% if product.stock <= 0 %}disabled{% endif %}>
+        {% if product.stock <= 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+      </button>
+    </form>
+  </div>
+</article>

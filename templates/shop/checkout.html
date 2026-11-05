@@ -1,0 +1,28 @@
+{% extends "shop/base.html" %}
+{% load shop_extras %}
+{% block title %}Checkout – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section checkout">
+  <form class="form" method="post">
+    {% csrf_token %}
+    <h2>Delivery Details</h2>
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div class="form-errors">{{ field.errors }}</div>{% endif %}
+    {% endfor %}
+    <button class="btn" type="submit">Place Order · {{ total|currency }}</button>
+    <p class="muted">Online payment gateway is not connected yet. Orders are recorded as pending payment for delivery or manual confirmation.</p>
+  </form>
+  <div class="summary" style="margin:0;height:fit-content">
+    <h3>Order Summary</h3>
+    {% for line in lines %}
+      <div><span>{{ line.product.name }} × {{ line.qty }}</span><span>{{ line.product.price|multiply:line.qty|currency }}</span></div>
+    {% endfor %}
+    <div><span>Subtotal</span><span>{{ subtotal|currency }}</span></div>
+    <div><span>Shipping</span><span>{% if shipping %}{{ shipping|currency }}{% else %}FREE{% endif %}</span></div>
+    <div class="total"><span>Total</span><span>{{ total|currency }}</span></div>
+  </div>
+</section>
+{% endblock %}

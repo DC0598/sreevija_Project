@@ -1,0 +1,43 @@
+{% extends "shop/base.html" %}
+{% block title %}Shop Sarees – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section shop">
+  <aside class="filters">
+    <h3>Filters</h3>
+    <form action="{% url 'shop' %}" method="get">
+      {% if filters.q %}<input type="hidden" name="q" value="{{ filters.q }}">{% endif %}
+      <h4>Category</h4>
+      <select name="category"><option value="">All</option>{% for value in categories %}<option value="{{ value }}" {% if filters.category == value %}selected{% endif %}>{{ value }}</option>{% endfor %}</select>
+      <h4>Fabric</h4>
+      <select name="fabric"><option value="">All</option>{% for value in fabrics %}<option value="{{ value }}" {% if filters.fabric == value %}selected{% endif %}>{{ value }}</option>{% endfor %}</select>
+      <h4>Occasion</h4>
+      <select name="occasion"><option value="">All</option>{% for value in occasions %}<option value="{{ value }}" {% if filters.occasion == value %}selected{% endif %}>{{ value }}</option>{% endfor %}</select>
+      <h4>Max price: ₹{{ max_price }}</h4>
+      <input type="range" name="max" min="1000" max="20000" step="500" value="{{ max_price }}" style="width:100%">
+      <input type="hidden" name="sort" value="{{ filters.sort }}">
+      {% if filters.sale %}<input type="hidden" name="sale" value="1">{% endif %}
+      <button class="btn" type="submit">Apply filters</button>
+      <p><a href="{% url 'shop' %}" class="muted">Clear all</a></p>
+    </form>
+  </aside>
+  <div>
+    <form class="toolbar" action="{% url 'shop' %}" method="get">
+      <b>{{ products|length }} sarees{% if filters.q %} for “{{ filters.q }}”{% endif %}</b>
+      {% if filters.q %}<input type="hidden" name="q" value="{{ filters.q }}">{% endif %}
+      {% if filters.category %}<input type="hidden" name="category" value="{{ filters.category }}">{% endif %}
+      {% if filters.fabric %}<input type="hidden" name="fabric" value="{{ filters.fabric }}">{% endif %}
+      {% if filters.occasion %}<input type="hidden" name="occasion" value="{{ filters.occasion }}">{% endif %}
+      <input type="hidden" name="max" value="{{ max_price }}">
+      <select name="sort" onchange="this.form.submit()">
+        <option value="popular" {% if filters.sort == "popular" %}selected{% endif %}>Popularity</option>
+        <option value="new" {% if filters.sort == "new" %}selected{% endif %}>Newest</option>
+        <option value="low" {% if filters.sort == "low" %}selected{% endif %}>Price: Low to High</option>
+        <option value="high" {% if filters.sort == "high" %}selected{% endif %}>Price: High to Low</option>
+      </select>
+    </form>
+    {% if products %}
+      <div class="grid">{% for card in products %}{% include "shop/_product_card.html" with product=card.product image_url=card.image_url %}{% endfor %}</div>
+    {% else %}<div class="empty">No sarees match your filters.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

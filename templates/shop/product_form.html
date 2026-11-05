@@ -1,0 +1,18 @@
+{% extends "shop/base.html" %}
+{% block title %}{% if product %}Edit{% else %}Add{% endif %} product – Sreevija Vastara{% endblock %}
+{% block content %}
+<section class="section" style="max-width:760px;margin:auto">
+  <form class="form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2>{% if product %}Edit product{% else %}Add product{% endif %}</h2>
+    {% for field in form %}
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div class="form-errors">{{ field.errors }}</div>{% endif %}
+    {% endfor %}
+    {% if product and product.image_name %}<p class="muted">Current image: {{ product.image_name }}</p>{% endif %}
+    <button class="btn" type="submit">Save product</button>
+    <a href="{% url 'manage' %}">Cancel</a>
+  </form>
+</section>
+{% endblock %}

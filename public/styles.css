@@ -318,6 +318,20 @@ main { min-height: 65vh; }
 .footer-newsletter .btn { padding: 7px 12px; color: #3a1b0e; background: linear-gradient(110deg, #efd18b, #d5a74d); font-size: 10px; }
 .toast { position: fixed; z-index: 50; bottom: 24px; left: 50%; padding: 12px 22px; color: #fff; background: var(--wine-dark); border-radius: 6px; opacity: 0; pointer-events: none; transform: translate(-50%, 80px); transition: transform .3s, opacity .3s; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+.header .auth-links form { display: inline; }
+.header-link { padding: 0; color: inherit; background: none; border: 0; cursor: pointer; font: inherit; }
+.header-link:hover { color: var(--gold-light); }
+.messages { padding: 0 4vw; }
+.message { margin: 0; padding: 9px 14px; color: var(--wine); background: #f7e8c9; border-bottom: 1px solid var(--line); text-align: center; }
+.message.error { color: #8d1c2a; background: #f8dddd; }
+.form-errors { color: #a43838; font-size: 13px; }
+.link-button { padding: 0; background: none; border: 0; cursor: pointer; text-decoration: underline; }
+.card .info form { margin-top: auto; }
+.card .info form .btn { width: 100%; }
+.toolbar h3 { margin: 0; color: var(--wine); }
+.admin-inline-form { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+.admin-inline-form select { max-width: 180px; padding: 7px; background: #fffdf8; border: 1px solid #dbcdb8; border-radius: 4px; }
+.mobile-nav-account { display: none; }
 
 @media (max-width: 1080px) {
   .header { gap: 15px; padding-right: 3vw; padding-left: 3vw; }
@@ -339,6 +353,10 @@ main { min-height: 65vh; }
   .nav-home { border-bottom-color: #ffffff20; }
   .nav-dropdown { width: 100%; }
   .dropdown-menu { position: static; margin: 2px 0 8px; background: #f9f0df; box-shadow: none; }
+  .mobile-nav-account { display: flex; flex-direction: column; }
+  .mobile-nav-account a, .mobile-nav-account button { padding: 12px 4px; color: #fff4d6; background: none; border: 0; border-bottom: 1px solid #ffffff20; text-align: left; }
+  .mobile-nav-account button { cursor: pointer; font: inherit; }
+  .mobile-nav-account form { display: contents; }
   .search { display: none; }
   .auth-links { display: none; }
   .menu-btn { display: block; margin-left: auto; }
