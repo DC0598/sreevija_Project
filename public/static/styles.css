@@ -44,7 +44,7 @@ main { min-height: 65vh; }
 .logo-copy { display: flex; flex-direction: column; align-items: center; line-height: 1; }
 .brand-name-lockup { display: flex; align-items: flex-start; gap: 0; }
 .brand-emblem { width: 33px; flex: 0 0 auto; object-fit: contain; }
-.brand-wordmark { display: block; width: 130px; height: auto; }
+.brand-wordmark { display: block; width: 130px; height: auto; margin-left: -14px; }
 .brand-flourish { display: flex; width: 100%; height: 12px; align-items: center; justify-content: center; gap: 4px; margin-top: -2px; }
 .brand-flourish::before, .brand-flourish::after { width: 24px; height: 1px; background: var(--gold); content: ""; }
 .brand-flourish img { width: 16px; height: 12px; object-fit: contain; }
@@ -304,7 +304,7 @@ main { min-height: 65vh; }
 .footer-brand { padding-right: 22px; border-right: 1px solid #bd8a3c; }
 .footer .logo { margin-bottom: 10px; }
 .footer .brand-emblem { width: 38px; }
-.footer .brand-wordmark { width: 148px; }
+.footer .brand-wordmark { width: 148px; margin-left: -16px; }
 .footer .brand-flourish { height: 14px; }
 .footer .brand-flourish img { width: 19px; height: 14px; }
 .footer .logo-copy small { font-size: 6px; }
