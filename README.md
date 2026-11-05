@@ -1,4 +1,4 @@
-# Sreevija Vastra
+# SreeVija Vastra
 
 Django storefront with server-rendered templates, Django authentication, and a
 PostgreSQL database. Local development uses SQLite unless `DATABASE_URL` is set.

@@ -23,7 +23,7 @@
   <rect width="512" height="512" rx="34" fill="url(#background)"/>
   <image href="sreevija-vastra-emblem.png" x="171" y="22" width="170" height="170"/>
   <g fill="url(#gold)" filter="url(#glow)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
-    <text x="256" y="284" font-size="75" letter-spacing="1">SREEVIJA</text>
+    <text x="256" y="284" font-size="75" letter-spacing="1">REEVIJA</text>
     <text x="256" y="341" font-size="43" letter-spacing="15">VASTRA</text>
   </g>
   <path d="M92 375h129m70 0h129" stroke="#d7ad52" stroke-width="2"/>
