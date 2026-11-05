@@ -328,7 +328,7 @@ main { min-height: 65vh; }
 .link-button { padding: 0; background: none; border: 0; cursor: pointer; text-decoration: underline; }
 .card-actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; }
 .card-actions .muted { font-size: 11px; }
-.card-actions form { flex: 0 0 auto; }
+.card-actions form { flex: 0 0 auto; margin-left: auto; }
 .card-actions .btn { padding: 8px 10px; font-size: 11px; }
 .toolbar h3 { margin: 0; color: var(--wine); }
 .admin-inline-form { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 8px; }
@@ -380,8 +380,12 @@ main { min-height: 65vh; }
   .shop, .detail, .checkout { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
-  .brand-emblem { width: 26px; }
-  .brand-wordmark { width: 105px; }
+  .brand-emblem { width: 34px; margin-top: 3px; }
+  .brand-wordmark { width: 112px; }
+  .detail .row { justify-content: flex-end; }
+  .detail .row .qty { order: 0; }
+  .detail .row button[name="next"] { order: 1; }
+  .detail .row button:not([name="next"]) { order: 2; }
   .brand-flourish { height: 10px; }
   .brand-flourish img { width: 14px; height: 10px; }
   .brand-flourish::before, .brand-flourish::after { width: 18px; }

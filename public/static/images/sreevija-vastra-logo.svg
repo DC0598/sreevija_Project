@@ -10,19 +10,10 @@
       <stop offset=".48" stop-color="#e4b84f"/>
       <stop offset="1" stop-color="#9c671e"/>
     </linearGradient>
-    <filter id="glow" x="-.1" y="-.1" width="1.2" height="1.2">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur"/>
-      <feFlood flood-color="#f8d77f" flood-opacity=".4"/>
-      <feComposite in2="blur" operator="in"/>
-      <feMerge>
-        <feMergeNode/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
   </defs>
   <rect width="512" height="512" rx="34" fill="url(#background)"/>
   <image href="sreevija-vastra-emblem.png" x="171" y="22" width="170" height="170"/>
-  <g fill="url(#gold)" filter="url(#glow)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+  <g fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
     <text x="256" y="284" font-size="75" letter-spacing="1">REEVIJA</text>
     <text x="256" y="341" font-size="43" letter-spacing="15">VASTRA</text>
   </g>
