@@ -267,9 +267,22 @@ class StorefrontTests(TestCase):
         dashboard = self.client.get(reverse("manage"))
         self.assertContains(dashboard, "Admin Dashboard")
         self.assertContains(dashboard, self.product.name)
-        self.assertContains(dashboard, '<table class="admin-order-table">')
-        self.assertContains(dashboard, "guest@example.com")
-        self.assertContains(dashboard, order.pk)
+        self.assertContains(dashboard, "Customer Orders")
+        self.assertContains(dashboard, '<a href="/manage/" aria-current="page">Products</a>')
+        self.assertNotContains(dashboard, "guest@example.com")
+
+        order_tab = self.client.get(reverse("manage_orders"))
+        self.assertContains(order_tab, '<a href="/manage/orders/" aria-current="page">Customer Orders</a>')
+        self.assertContains(order_tab, '<table class="admin-order-table">')
+        self.assertContains(order_tab, "guest@example.com")
+        self.assertContains(order_tab, order.pk)
+        self.assertRedirects(
+            self.client.post(
+                reverse("manage_order", args=[order.pk]),
+                {"status": "Confirmed", "payment_status": "Pending"},
+            ),
+            reverse("manage_orders"),
+        )
         response = self.client.post(reverse("newsletter"), {"email": "reader@example.com"})
         self.assertRedirects(response, reverse("home"))
         self.assertTrue(NewsletterSubscriber.objects.filter(email="reader@example.com").exists())

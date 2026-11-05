@@ -22,6 +22,7 @@ urlpatterns = [
     path("newsletter/", views.newsletter, name="newsletter"),
     path("uploads/<str:name>", views.product_image, name="product_image"),
     path("manage/", views.manage, name="manage"),
+    path("manage/orders/", views.manage_orders, name="manage_orders"),
     path("manage/products/add/", views.manage_product, name="manage_product_add"),
     path("manage/products/<int:pk>/", views.manage_product, name="manage_product"),
     path("manage/products/<int:pk>/visibility/", views.manage_product_visibility, name="manage_product_visibility"),

@@ -1,0 +1,17 @@
+{% extends "shop/base.html" %}
+{% load shop_extras %}
+{% block title %}Customer Orders – Admin – SreeVija Vastra{% endblock %}
+{% block content %}
+<section class="section">
+  <h2>Admin Dashboard</h2>
+  <div class="perks">
+    <div><b>{{ stats.orders }}</b><br><span class="muted">Orders</span></div>
+    <div><b>{{ stats.revenue|currency }}</b><br><span class="muted">Revenue</span></div>
+    <div><b>{{ stats.products }}</b><br><span class="muted">Products</span></div>
+    <div><b>{{ stats.low_stock }}</b><br><span class="muted">Low stock</span></div>
+  </div>
+  {% include "shop/_admin_tabs.html" %}
+  <h3>Customer Orders</h3>
+  {% include "shop/_admin_order_table.html" %}
+</section>
+{% endblock %}

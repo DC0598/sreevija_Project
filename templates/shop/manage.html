@@ -10,44 +10,7 @@
     <div><b>{{ stats.products }}</b><br><span class="muted">Products</span></div>
     <div><b>{{ stats.low_stock }}</b><br><span class="muted">Low stock</span></div>
   </div>
-  <h3>Orders</h3>
-  {% if orders %}
-    <div class="admin-table-wrap">
-      <table class="admin-order-table">
-        <thead>
-          <tr>
-            <th scope="col">Order</th>
-            <th scope="col">Customer</th>
-            <th scope="col">Items</th>
-            <th scope="col">Delivery address</th>
-            <th scope="col">Total / payment</th>
-            <th scope="col">Update status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for order in orders %}
-            <tr>
-              <td><b>{{ order.id }}</b><span>{{ order.created_at|date:"d M Y, H:i" }}</span></td>
-              <td>{{ order.name }}<span>{{ order.phone }}</span><a href="mailto:{{ order.email }}">{{ order.email }}</a></td>
-              <td>{% for item in order.items.all %}<span>{{ item.name }} × {{ item.qty }}</span>{% endfor %}</td>
-              <td>{{ order.address }}<span>{{ order.city }} · {{ order.pincode }}</span></td>
-              <td><b>{{ order.total|currency }}</b><span>{{ order.payment_method }}</span><span>{{ order.payment_status }}</span></td>
-              <td>
-                <form method="post" action="{% url 'manage_order' order.id %}" class="admin-inline-form">
-                  {% csrf_token %}
-                  <select name="status" aria-label="Order status">{% for value,label in order.STATUS_CHOICES %}<option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
-                  <select name="payment_status" aria-label="Payment status">{% for value,label in order.PAYMENT_STATUS_CHOICES %}<option value="{{ value }}" {% if order.payment_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
-                  <button class="btn ghost" type="submit">Update</button>
-                </form>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <div class="empty">No orders yet.</div>
-  {% endif %}
+  {% include "shop/_admin_tabs.html" %}
   <div class="toolbar"><h3>Products</h3><a class="btn" href="{% url 'manage_product_add' %}">Add product</a></div>
   {% for row in products %}
     <div class="cart-item" style="grid-template-columns:64px 1fr auto">

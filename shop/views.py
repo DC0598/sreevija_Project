@@ -434,7 +434,6 @@ staff_required = user_passes_test(lambda user: user.is_authenticated and user.is
 
 @staff_required
 def manage(request):
-    orders_list = Order.objects.prefetch_related("items").order_by("-created_at")
     products = Product.objects.order_by("-created_at")
     stats = {
         "orders": Order.objects.count(),
@@ -447,8 +446,27 @@ def manage(request):
         "shop/manage.html",
         {
             "stats": stats,
-            "orders": orders_list,
             "products": [dict(product=product, image_url=product_image_url(product)) for product in products],
+            "active_tab": "products",
+        },
+    )
+
+
+@staff_required
+def manage_orders(request):
+    stats = {
+        "orders": Order.objects.count(),
+        "revenue": Order.objects.exclude(status="Cancelled").aggregate(total=Sum("total"))["total"] or 0,
+        "products": Product.objects.filter(active=True).count(),
+        "low_stock": Product.objects.filter(active=True, stock__lte=3).count(),
+    }
+    return render(
+        request,
+        "shop/manage_orders.html",
+        {
+            "stats": stats,
+            "orders": Order.objects.prefetch_related("items").order_by("-created_at"),
+            "active_tab": "orders",
         },
     )
 
@@ -485,7 +503,7 @@ def manage_order(request, order_id):
             new_status = form.cleaned_data["status"]
             if order.status == "Cancelled" and new_status != "Cancelled":
                 messages.error(request, "Cancelled orders cannot be reopened.")
-                return redirect("manage")
+                return redirect("manage_orders")
             if new_status == "Cancelled" and order.status != "Cancelled":
                 items = list(order.items.select_for_update())
                 for item in items:
@@ -497,4 +515,4 @@ def manage_order(request, order_id):
             messages.success(request, "Order updated.")
         else:
             messages.error(request, "Choose valid order and payment statuses.")
-    return redirect("manage")
+    return redirect("manage_orders")

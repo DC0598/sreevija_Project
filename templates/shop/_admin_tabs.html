@@ -1,0 +1,4 @@
+<nav class="admin-tabs" aria-label="Admin sections">
+  <a href="{% url 'manage_orders' %}"{% if active_tab == "orders" %} aria-current="page"{% endif %}>Customer Orders</a>
+  <a href="{% url 'manage' %}"{% if active_tab == "products" %} aria-current="page"{% endif %}>Products</a>
+</nav>

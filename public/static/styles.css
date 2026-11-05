@@ -341,6 +341,10 @@ main { min-height: 65vh; }
 .toolbar h3 { margin: 0; color: var(--wine); }
 .admin-inline-form { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; margin-top: 8px; }
 .admin-inline-form select { max-width: 180px; padding: 7px; background: #fffdf8; border: 1px solid #dbcdb8; border-radius: 4px; }
+.admin-tabs { display: flex; gap: 6px; margin: 18px 0 22px; border-bottom: 1px solid var(--line); }
+.admin-tabs a { margin-bottom: -1px; padding: 10px 16px; color: var(--muted); border: 1px solid transparent; border-radius: 6px 6px 0 0; font-weight: 600; }
+.admin-tabs a:hover { color: var(--wine); background: #f7ead5; }
+.admin-tabs a[aria-current="page"] { color: var(--wine); background: var(--paper); border-color: var(--line) var(--line) var(--paper); }
 .admin-table-wrap { margin: 12px 0 28px; overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 7px; }
 .admin-order-table { width: 100%; min-width: 1020px; border-collapse: collapse; text-align: left; }
 .admin-order-table th, .admin-order-table td { padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }

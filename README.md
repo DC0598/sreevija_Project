@@ -20,6 +20,9 @@ cp .env.example .env
 Open http://127.0.0.1:8000. Product browsing, search, filters, cart, checkout,
 customer accounts, wishlist, order history, and the staff dashboard are Django
 templates. The dashboard is at `/manage/`.
+Staff can review and update customer orders in the **Customer Orders** tab at
+`/manage/orders/`; product catalog management is in the separate **Products**
+tab.
 
 ## Deploy to Vercel with Neon
 
