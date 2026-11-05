@@ -8,4 +8,3 @@ uploads/
 .env.*
 !.env.example
 staticfiles/
-/public/static/

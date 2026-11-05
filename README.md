@@ -32,8 +32,8 @@ templates. The dashboard is at `/manage/`.
 3. Push the code and deploy. Vercel runs `build.py`, which applies Django
    migrations, imports the previous app's product catalog and image bytes if
    present, seeds products if the catalog is empty, and creates the initial
-   staff account if one does not already exist. It also collects static assets
-   into `public/static` so Vercel serves them from its CDN.
+   staff account if one does not already exist. Storefront static assets live
+   under `public/static` so Vercel serves them from its CDN.
    If you use a custom domain, also add it to the `ALLOWED_HOSTS` environment
    variable (comma-separated).
 
