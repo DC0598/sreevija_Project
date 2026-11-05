@@ -33,7 +33,9 @@ templates. The dashboard is at `/manage/`.
    migrations, imports the previous app's product catalog and image bytes if
    present, seeds products if the catalog is empty, and creates the initial
    staff account if one does not already exist. Storefront static assets live
-   under `public/static` so Vercel serves them from its CDN.
+   under `public/static` so Vercel serves them from its CDN. The Vercel
+   function is pinned to Singapore (`sin1`) to keep it close to the Neon
+   database; change `regions` in `vercel.json` if the database is moved.
    If you use a custom domain, also add it to the `ALLOWED_HOSTS` environment
    variable (comma-separated).
 
