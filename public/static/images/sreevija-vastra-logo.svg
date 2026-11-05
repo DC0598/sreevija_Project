@@ -13,7 +13,7 @@
   </defs>
   <rect width="512" height="512" rx="34" fill="url(#background)"/>
   <image href="sreevija-vastra-emblem.png" x="171" y="22" width="170" height="170"/>
-  <g fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+  <g fill="#f0d58f" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle" text-rendering="geometricPrecision">
     <text x="256" y="284" font-size="75" letter-spacing="1">REEVIJA</text>
     <text x="256" y="341" font-size="43" letter-spacing="15">VASTRA</text>
   </g>
